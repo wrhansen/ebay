@@ -1,0 +1,183 @@
+01/13/2012 10:14:18 AM
+__author__ = "Wesley Hansen"
+
+This README covers everything you need to know about the ebay package. It details
+how to use the api to create a request object and then create a connection to
+send to the correct eBay servers.
+NOTE: In order to use this API successfully you must have obtained developer credentials
+from eBay and updated the file 'api_credentials.json' with the correct information in
+the '_keys' field.
+	You can obtain the developer credentials for free at: https://developer.ebay.com/join/
+
+HOW TO USE API:
+
+	There are only a few steps necessary to start creating requests and uploading them to eBay:
+	1) Import ebay package
+	2) Initialize request object
+	3) Updating the data structure
+	4) Build XML request DOM
+	5) Create Connection
+	6) Send the Request
+	7) Retrieve a Response
+
+
+	Import ebay package:
+		To import a Request object, it's best to do it by name:
+			>>> from ebay.trading import AddItemRequest
+		Or if you want to import all the requests:
+			>>> from ebay.trading import *
+		
+		To import the connection object:
+			>>> import ebay
+				or
+			>>> from ebay import EbayAPIConnection
+		
+	
+	Initialize request object:
+		There are several different ways a request object can be initialized.
+		As far as the trading api is concerned, a request can be created with
+		or without headers, and requester credentials. (If you're using Large
+		Merchant Services and need to make multiple requests and store in  a Bulk Data Exchange Requests
+		container, then you'd want to create without requester credentials). You can
+		also specify your own headers and/or auth token or, by default, use the 
+		global configuration to configure these for you( grabs its information from
+		an EbayAPIConnection object).
+		
+		To create a request object with global configuration of the headers and auth token(default):
+			>> additem = AddItemRequest()
+			(NOTE: This configuration also uses the default environment, 'sandbox'.
+			To specify an environment, pass it through the token arg when creating
+			the request:
+				>>> additem = AddItemRequest( token='production' )
+			
+		To create a request object that specifies your own headers and/or token:
+			>>> headers = {
+			...		'X-EBAY-API-COMPATIBILITY-LEVEL': '747',
+			...		'X-EBAY-API-CALL-NAME': 'AddItem',
+			...		'X-EBAY-API-DEV-NAME' : 'Insert-Dev-Key-Here',
+			...		'X-EBAY-API-APP-NAME' : 'Insert-App-Key-Here',
+			...		'X-EBAY-API-CERT-NAME': 'Insert-Cert-Key-Here',
+			...		'X-EBAY-API-SITEID'   : '100',
+					'Content-Type': "text/xml",
+			...}
+			>>> token = "YOUR EBAY API AUTH TOKEN GOES HERE"
+			>>> additem = AddItemRequest( headers, token )
+		
+		To create a request object that doesn't generate headers or requester credentials(For use in Large Merchant Services API):
+			>>> additem = AddItemRequest( False, False )
+		
+	Updating the data structure:
+		All EbayApiRequest objects have a dictionary data structure that
+		you can update/build through use of the EbayApiRequest.update() function.
+		You can call update several times, passing a dictionary as the sole argument
+		to the function
+		
+		>>> data = {ADDITEM STUFF INSIDE HERE}
+		>>>additem.update( data )
+		
+		Note: The update function also validates the data structure as you update.
+		It checks for valid top-level keys, and when applicable, it validates
+		special sections that might contain nested keys or require certain values.
+		
+		The dictionary that holds this information is EbayApiRequest.data
+		It is possible to simply update it directly, but it's not recommended
+		to skip validation, eBay won't like your request if you can't pass
+		this API's validation rules anyways :)
+		Also: In order to build an xml request, you must have validated the 
+		data anyways.
+		Warning: If you're calling update several times before building a request,
+		keep in mind that dictionary updates do overwrite keys if a
+		key already exists. 
+		
+		
+	Build XML request DOM:
+		To build a request, you must have first already updated EbayApiRequest.data
+		and have it validated by the update function(). A call to EbayApiRequest.get_element()
+		will build the xml dom and set the request object's tree
+		accordingly as well as return the etree._Element that was created.
+		Once a request is built, you can use print-type functions to 
+		see what it looks like. Functions like prettyprint() or just the str()
+		builtin will show you what it looks like:
+		
+			>>> request = additem.get_element()
+			>>> additem.prettyprint()
+			
+			NOTE: get_element() sets the 'tree' data type internally as well as
+			returns the tree in case you want to save the request that was generated
+			to file.
+
+
+	Create Connection:
+		Once you have successfully built a request dom it's time to use it!  The
+		ebay.EbayAPIConnection object can connect to the correct server, send
+		the request and retrieve a response. If you're using an EbayApiRequest
+		to build your request, it's really simple to create the proper 
+		ebay.EbayAPIConnection for that request:
+			>>> import ebay
+			>>> connection = ebay.EbayAPIConnection( request=additem )
+		
+		You can also supply your own parameters to the EbayAPIConnection 
+		constructor if you'd like more control over where you'll connect to:
+			>>> connection = ebay.EbayAPIConnection( headers, "trading_api", "sandbox")
+			
+	Send the request:
+		If you created the connection object with an EbayApiRequest, then it's
+		incredibly simple to send the request that's built-in to the object:
+			>>> connection.send_request()
+		
+		Again, you can also specify an xml string, or another EbayApiRequest
+		as an argument and send that instead:
+			>>> connection.send_request( additem )
+					or
+			>>> connection.send_request( "<Hi>Hello</Hi>" )
+	
+	
+	Retrieve a response:
+		Each eBay request returns a response, in an xml string, that tells you whether the 
+		request was successful or not and then gives you output describing it. To
+		retrieve this response from the EbayAPIConnection object:
+			>>> response = connection.get_response()
+			
+		Where response is a file pointer object that you can read into a string.
+			
+		
+		
+Other Notes:
+	-It is expected that you know a little about what information is necessary to build
+	a given Trading API request. But this api does include methods that can help you
+	narrow down what is expected and/or accepted.
+	
+	-To get an idea of what's expected and how the data structure should look, you can use
+	the help() function:
+		>>>print additem.help()
+
+	-Also, the api keeps a good eye on the top level keys you try to update. So if something isn't
+	right, it will tell you what it is, and also tell you what it's expecting.
+
+	
+Related examples:
+				
+		test_additem.py: This script details how to use the api to create an AddItem
+		XML request and send it to the proper eBay server using AddItemRequest and
+		EbayAPIConnection.
+		
+		testing_item_build.py: This script contains various examples that further
+		show how to build an additem request. Also, in the commented section
+		it details how to append the request created from an EbayApiRequest object
+		into a BulkDataFile.
+		
+		testing_init.py: This script details the various ways you can initialize
+		an EbayApiRequest object. Whether it be created using globally configured headers
+		and auth token, or created using custom headers and token, or using no headers
+		or token, this script covers them all.
+		
+		testing_reviseitem.py: This script tests the validation and building of the 
+		ReviseItemRequest class.
+		
+		testing_enditem.py: This script tests the validation and building of the EndItemRequest
+		class.
+		
+		
+		
+		
+		

@@ -1,0 +1,151 @@
+01/16/2012 10:40:35 AM 
+__author__= "Wesley Hansen"
+
+This document details everything you need to know if you want to implement new api calls, or 
+update, or refine the source code in some way. Also included in this document is a TODO for
+all the things that are yet to be included( but will be, time permitting), and for all the 
+things that need to be updated, changed, or fixed.
+
+What you need to do in order to create a new api call( example: create a GetItem request object for Trading API):
+	
+	1) Follow the name-version scheme:
+		-When you create a new request object, it's best to organize it in the same location as the 
+		all the other calls for that particular ebay api.
+		-It's also, for developers and users alike, necessary to follow the name-version scheme in
+		order to organize the api into versions. So, using the GetItem example from above, you'll
+		create a file named getitem747.py in the ebay/trading/ directory and inside it will
+		look something like this:
+		
+			from ebay.trading.__trading import *
+			
+			class GetItemRequest( TradingApiRequest ):
+				
+					required_keys = (,)
+					other_keys = (,)
+					
+					def __init__( self, *args ):
+						self.call_name = 'GetItem'
+						self.request_name = 'GetItemRequest'
+						self.api_version = '747'
+						TradingApiRequest.__init__( self, *args )
+						
+						self.help_string = "Fill in help string for help()"
+						
+					
+					"""
+					Add any number of _validate_[some top-level field] functions
+					you feel is necessary to ensure a solid, correct request object here.
+					"""
+	2) Update the __init__.py to import your new request object. In __init__.py you'll
+	see a section of all the requests being imported and you just simply follow the same 
+	format to import your new request object:
+		############################
+		#
+		#	Import version 747
+		#
+		############################
+		from additem747 import AddItemRequest
+		from enditem747 import EndItemRequest
+		from reviseitem747 import ReviseItemRequest
+		from getitem747 import GetItemRequest
+	
+	3) If you've incorported new fields( any new field, both top-level and anything that's nested),
+	you need to update the key_map data structure found in ebay/trading/__trading.py
+	It is important that you are consistent with the naming of your new key. 
+	The key should be all lowercase, with each word( or abbreviated word) in the key separated by an underscore:
+		item_id( your key) --> ItemID( eBay's xml field)
+
+	4) In your implementation of the new request class it is important to override the following:
+		-required_keys: Should be a tuple, list or set of all top-level keys that are required to
+		build a proper request.
+		-other_keys: Should also be a tuple, list or set of all other top-level keys that are accepted
+		for this request.
+		-In the __init__ method:
+			-self.call_name[str]: The name of the eBay api call
+			-self.request_name[str]: The name fo the eBay api call with "Request" appended to it
+			-self.api_version[str]: The version number of the call
+			-self.help_string[str]: The string that is returned to call from help().
+				This string should detail information about what keys are required and/or accepted from this
+				call. And it should also print out a simple example of what the data structure should look like.
+				
+				
+	5) Validation
+		-The validation functions get called when a call to update() is made. These functions must have a form
+		like: 
+			_validate_key( self, value):
+			-Where 'key' is a top-level key passed to the data dictionary and value is the corresponding
+			value at that key.
+			-The validate function should check for error conditions in value and raise them when appropriate,
+			nothing more than that.
+			-Note: the update function will only check for top-level key-named _validate functions.
+				So if you want to validate nested keys, you'd best call those functions them from within
+				a top-level key _validate function.
+			
+		-these functions can be added/used at your discretion, but they should help in making sure
+		a request object is as complete and correct as possible before it gets uploaded to eBay.
+			
+
+TODO list( in no particular order of importance or urgency):
+	
+	Implement more Trading API calls:
+		-currently, as of the date of this writing, only additem, reviseitem, and enditem have been implemented.
+		Still need to be implemented:
+			-RelistItem
+			-GetItem
+			-GetSellerList
+			-AddItems*
+			-GetItems*
+			-etc
+			
+			*-To implement these, either heavy validation is going to have to occur, or
+			the _build() and update() functions will have to account for having multiple items.
+			
+	Implement attributes in building of xml container:
+		-Currently the _build_item_container() function located in EbayApiRequest class in ebay/__init__.py
+		is able to build many structures an xml request could make:
+			Data structure						XML structure
+				{'a':'b'}           -->				<a>b</a>
+				
+				{'a': ['b','c']}	-->				<a>b</a>
+													<a>c</a>
+			
+				{'a': {'b': 'c'}}	-->				<a><b>c</b></a>
+				
+			
+			There is at least one condition that still needs to be implemented:
+				An xml tag that contains attributes as well as a text field.
+				Example: <a b="c">d</a>
+				
+				One possible implementation: 
+					{'a': { '_attr': {'b': 'c'},		-->		<a b="c">d</a>
+							'value': 'd'}}
+				
+				This will require some major changes of the entire _build_item_container function.
+	
+	Validate more thoroughly:
+		-The requests that are implemented( additem, enditem, and reviseitem) do need to be more heavily
+		validated. 
+			-The shipping_details key of AddItemRequest in particular needs some attention. It currently
+			does a poor job of validating, only checking for a few 'required' keys. "Required" in the
+			sense of shipping_details is hard to determine simply because there are so many options
+			and clauses.
+			
+			-In general, each call needs to have more validation. Not every top-level key
+			necessarily requires validation but at the very least it should be offered if a
+			key's value: can be only a certain set of values, is a nested structure or list of values,
+			or needs to be formatted in a special way.
+	
+	Implement a ResponseParser class:
+		-Need something to parse the xml response returned from eBay and retrieved from EbayAPIConnection.get_response().
+		This parser should be able to read the response and parse it into a properly formatted
+		dictionary. It should be able to tell if response returned 'Success' or 'Failure'.
+		
+
+													
+												
+		
+			
+			
+						
+				
+				
