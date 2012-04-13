@@ -3,16 +3,18 @@ __author__ = "Wesley Hansen"
 
 What does this API do?
 	This API is designed to build an XML request file and then send the request
-	to the correct eBay server. Currently this API supports most calls from eBay's
-	Trading API. This includes the calls: AddItem, GetItem, EndItem, RelistItem, ReviseItem, etc...
+	to the correct eBay server. Currently this API supports most calls from
+	eBay's Trading API. This includes the calls: AddItem, GetItem, EndItem,
+	RelistItem,	ReviseItem, etc...
 	
-	This API also has functionality to build the requests and insert them into a BulkDataExchange
-	container for use with eBay's Large Merchant Services(LMS) API. 
+	This API also has functionality to build the requests and insert them into a
+	BulkDataExchange container for use with eBay's Large Merchant Services(LMS)
+	API. 
 
 
 How to use this API:
-	It's really simple to use! For example, let's create a simple request to end an existing
-	item on ebay:
+	It's really simple to use! For example, let's create a simple request to end
+	an existing item on ebay:
 	
 	from ebay.trading import EndItemRequest#For the request
 	import ebay#For the EbayAPIConnection
@@ -47,19 +49,21 @@ Requirements:
 	If you're running Ubuntu/Linux install the python lxml package:
 		sudo apt-get install python-lxml
 	
-	-A basic knowledge of what information a request needs to build the XML request
-	for sending to the eBay server.
+	-A basic knowledge of what information a request needs to build the XML
+	request for sending to the eBay server.
 
 Notes:
-	There are plans to branch this API out to support more of eBay's APIs. And there are also
-	plans to add more of Trading API's calls as well as more validation.
+	There are plans to branch this API out to support more of eBay's APIs. And
+	there are also plans to add more of Trading API's calls as well as more
+	validation.
 	Any help is welcome!
 
-	Check out the examples/ directory for more samples on how to use the API. Also
-	make sure to check out README_MORE_INFO for more information about this
+	Check out the examples/ directory for more samples on how to use the API.
+	Also make sure to check out README_MORE_INFO for more information about this
 	API and how to use it and set it up.
 	
-If you have any questions or comments, feel free to reach me at wes@ridersdiscount.com!
+If you have any questions or comments, feel free to reach me at:
+wes@ridersdiscount.com!
 	
 
 
