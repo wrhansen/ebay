@@ -45,9 +45,11 @@ How to use this API:
 Requirements:
 	-The eBay API uses etree._Element to build the requests, so
 	it requires the lxml module.
+	-This api also uses the simplejson module to read the credentials structure
 	
-	If you're running Ubuntu/Linux install the python lxml package:
-		sudo apt-get install python-lxml
+	If you're running Ubuntu/Linux install the python packages:
+		sudo apt-get install python-lxml python-simplejson
+		
 	
 	-A basic knowledge of what information a request needs to build the XML
 	request for sending to the eBay server.
