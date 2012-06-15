@@ -1,3 +1,20 @@
+#    This module is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.#
+#
+#    This module is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "Wesley Hansen"
+__email__ = "wes@ridersdiscount.com"
+__date__ = "06/15/2012 11:38:39 AM"
+
 from ebay.trading.__trading import *
 
 class AddItemRequest(TradingApiRequest):
@@ -13,8 +30,6 @@ class AddItemRequest(TradingApiRequest):
 	This class uses the GlobalTrading configuration
 	'''
 
-
-	
 	other_keys = ('listing_type', 'picture_details','subtitle', 'sku','uuid','description',
 				 'buy_it_now_price','condition_id', 'category_mapping_allowed',
 				 'pay_pal_email_address', 'item_specifics' ) #Defines top-level keys that can be set(but aren't required)

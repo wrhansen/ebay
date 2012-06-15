@@ -1,3 +1,21 @@
+#    This module is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.#
+#
+#    This module is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "Wesley Hansen"
+__email__ = "wes@ridersdiscount.com"
+__date__ = "06/15/2012 11:38:39 AM"
+
+
 from ebay import *
 class GlobalConfiguration():
 	'''
@@ -12,7 +30,7 @@ class GlobalConfiguration():
 	}
 	token   = ""
 	
-	header_keys     = ('X-EBAY-API-COMPATIBILITY-LEVEL', 'X-EBAY-API-DEV-NAME', 'X-EBAY-API-APP-NAME', 'X-EBAY-API-CERT-NAME', 'X-EBAY-API-SITEID', 'X-EBAY-API-CALL-NAME')
+	header_keys   = ('X-EBAY-API-COMPATIBILITY-LEVEL', 'X-EBAY-API-DEV-NAME', 'X-EBAY-API-APP-NAME', 'X-EBAY-API-CERT-NAME', 'X-EBAY-API-SITEID', 'X-EBAY-API-CALL-NAME')
 	
 
 	@classmethod
@@ -136,6 +154,19 @@ class TradingApiRequest(EbayApiRequest):
 		'name_value_list': 'NameValueList',
 		'name': 'Name',
 		'value': 'Value',
+		'entries_per_page': 'EntriesPerPage',
+		'page_number': 'PageNumber',
+		'pagination': 'Pagination',
+		'order_status': 'OrderStatus',
+		'order_role': 'OrderRole',
+		'number_of_days': 'NumberOfDays',
+		'detail_name': 'DetailName',
+		'mod_time_from': 'ModTimeFrom',
+		'mod_time_to': 'ModTimeTo',
+		'create_time_from': 'CreateTimeFrom',
+		'create_time_to': 'CreateTimeTo',
+		'order_id': 'OrderID',
+		'order_id_array': 'OrderIDArray',
 	}
 
 	def __init__(self, headers=None, token=None):
@@ -155,16 +186,16 @@ class TradingApiRequest(EbayApiRequest):
 			token[str] The Ebay Auth Token needed for TradingApi Requests
 		'''
 		if(headers):
-			print "Setting Headers"
+			#print "Setting Headers"
 			self.set_headers(headers)
 			self.use_headers = True
 		elif(headers == False):
 			#explicitly don't use headers( used for bulk requests)
-			print "Headers are false, not using headers"
+			#print "Headers are false, not using headers"
 			self.headers = False
 		elif(headers is None):
 			#Use global configuration
-			print "Headers are None, Using GlobalConfiguration"
+			#print "Headers are None, Using GlobalConfiguration"
 			self.set_headers(GlobalConfiguration.get_headers(self.environment))
 			self.use_headers = True
 		else:
@@ -173,19 +204,19 @@ class TradingApiRequest(EbayApiRequest):
 		if(isinstance(token,str)):
 			if token in ['production', 'sandbox']:
 				self.environment = token
-				print "Token is %s, using GlobalConfiguration" % token
+				#print "Token is %s, using GlobalConfiguration" % token
 				self.set_token(GlobalConfiguration.get_token(self.environment))
 				self.use_token = True
 			else:
-				print "Token is a string, setting it"
+				#print "Token is a string, setting it"
 				self.set_token(token)
 				self.use_token = True
 		elif(token is None):
-			print "Token is None, using GlobalConfiguration"
+			#print "Token is None, using GlobalConfiguration"
 			self.set_token(GlobalConfiguration.get_token(self.environment))
 			self.use_token = True
 		elif(token == False):
-			print "Token is False, not using a token"
+			#print "Token is False, not using a token"
 			#No token xml will be added to the request (used for bulk requests)
 			self.token = False
 		else:
@@ -199,7 +230,7 @@ class TradingApiRequest(EbayApiRequest):
 		EbayApiRequest.__init__( self )
 
 	def set_token(self, token):
-		print "Type: %s" % type( token )
+		#print "Type: %s" % type( token )
 		assert type(token) is str
 		self.token = token
 	
@@ -210,7 +241,7 @@ class TradingApiRequest(EbayApiRequest):
 		
 	def set_headers(self, headers):
 		for key, val in headers.iteritems():
-			print key, val
+			#print key, val
 			self.set_header(key, val)
 			
 	def get_headers(self):

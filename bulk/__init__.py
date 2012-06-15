@@ -1,3 +1,20 @@
+#    This module is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.#
+#
+#    This module is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = ["Ben DeMott", "Wesley Hansen"]
+__email__ = "wes@ridersdiscount.com"
+__date__ = "06/15/2012 11:38:39 AM"
+
 from lxml import etree
 import os.path
 import zlib
@@ -8,7 +25,7 @@ from ebay import EbayApiRequest
 class BulkDataFile(EbayApiRequest):
 	'''
 	Manages Bulk Data File Creation - the Data portion of the BulkDataExchange
-	request his managed here.  You don't *HAVE* to use this class in order to
+	request is managed here.  You don't *HAVE* to use this class in order to
 	use the BulkDataExchange Python API - however it is suggested!
 	
 	This file can also wrap a Bulk Data File that has been downloaded to provide
@@ -152,22 +169,6 @@ class BulkDataFile(EbayApiRequest):
 			path[str] The Path where we should save the file.
 			mode[str] 'r' for ReadOnly or 'w'/'r+' for Read and Write
 		'''
-		
-		# WES - HERE ARE SOME TODO'S FOR THIS SECTION OF LOGIC...
-		# LOGIC BELOW NEEDS TO BE FIXED.
-		# WE ALWAYS OPEN IN READ/WRITE MODE EVEN IF WRITE MODE IS REQUESTED
-		# IF WRITE MODE / READ+WRITE IS REQUESTED AND THE FILE ALREADY EXISTS
-		# And you aren't opening in READ-ONLY or APPEND modes we need to 
-		# truncate the file after opening it. 
-		# TO OPEN IN READ/WRITE (r+) The file must already exist
-		# .......
-		# Now For implementing the APPEND modes, we need to make sure we don't
-		# truncate the file, and we delete the last line, and set the write_pos
-		# correctly!
-		#
-		# For READ-ONLY mode, we just need to make sure we open the file and
-		# don't WRITE to it at all
-		
 		truncate = False
 		exists = False
 		#APPEND MODE
